@@ -1,24 +1,27 @@
 package net.IFTS11.maquina_Express.maquina_Express.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Productos")
+@Table(name = "productos")
 public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String producto;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "maquina_id")
+    @JsonIgnoreProperties({"productos", "handler", "hibernateLazyInitializer"})
     private Maquina maquina;
     private int cantidad;
     private float precio;
-    private boolean active;
-    private String image;
+    private boolean activo;
+    private String imagen;
     @Column(name = "fecha_vencimiento")
     private Date fechavencimiento;
     @Column(name = "fecha_reposicion")
@@ -33,14 +36,14 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(long id, String producto, Maquina maquina, int cantidad, float precio, boolean active, String image, Date fechavencimiento, Date fechareposicion, Date fechaactualizacion, String userService) {
+    public Producto(long id, String producto, Maquina maquina, int cantidad, float precio, boolean activo, String imagen, Date fechavencimiento, Date fechareposicion, Date fechaactualizacion, String userService) {
         this.id = id;
         this.producto = producto;
         this.maquina = maquina;
         this.cantidad = cantidad;
         this.precio = precio;
-        this.active = active;
-        this.image = image;
+        this.activo = activo;
+        this.imagen = imagen;
         this.fechavencimiento = fechavencimiento;
         this.fechareposicion = fechareposicion;
         this.fechaactualizacion = fechaactualizacion;
@@ -87,20 +90,20 @@ public class Producto {
         this.precio = precio;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isActivo() {
+        return activo;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     public String getImage() {
-        return image;
+        return imagen;
     }
 
     public void setImage(String image) {
-        this.image = image;
+        this.imagen = image;
     }
 
     public Date getFechavencimiento() {

@@ -9,9 +9,12 @@ public class Factura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "codigo_afip")
     private String codigoAFIP;
     private String producto;
-    private Maquina maquina;
+
+    @Column(name = "alias_maquina")
+    private String aliasMaquina;
     private float precio;
 
 
