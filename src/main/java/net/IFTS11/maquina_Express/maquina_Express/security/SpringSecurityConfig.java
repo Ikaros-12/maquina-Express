@@ -51,9 +51,10 @@ public class SpringSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(authz -> authz
                 //.requestMatchers("/api" ).permitAll()
-                .requestMatchers("/api/**" ).permitAll()
-                .requestMatchers("/api/users" ).permitAll()
-                .requestMatchers("/api/users/*" ).permitAll()
+                .requestMatchers("/api/**" ).authenticated()
+                .requestMatchers("/api/users/registrar" ).permitAll()
+                //.requestMatchers("/api/users/*" ).permitAll()
+                .requestMatchers("/pedido/**" ).permitAll()
                 .requestMatchers("/**" ).permitAll()
                 .anyRequest().authenticated())
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))

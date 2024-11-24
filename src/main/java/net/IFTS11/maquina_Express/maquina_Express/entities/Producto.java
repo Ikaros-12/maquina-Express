@@ -137,4 +137,21 @@ public class Producto {
     public void setUserService(String userService) {
         this.userService = userService;
     }
+
+    @Override
+    public String toString() {
+        return "Producto{" +
+                "id=" + id +
+                ", producto='" + producto + '\'' +
+                ", maquina=" + maquina +
+                ", cantidad=" + cantidad +
+                ", precio=" + precio +
+                ", activo=" + activo +
+                ", imagen='" + imagen + '\'' +
+                ", fechavencimiento=" + fechavencimiento +
+                ", fechareposicion=" + fechareposicion +
+                ", fechaactualizacion=" + fechaactualizacion +
+                ", userService='" + userService + '\'' +
+                '}';
+    }
 }

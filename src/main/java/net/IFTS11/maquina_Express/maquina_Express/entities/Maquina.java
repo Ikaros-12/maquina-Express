@@ -24,6 +24,12 @@ public class Maquina implements Serializable {
     private String estado;
     private String url;
 
+    private String direccion;
+
+    private String longitud;
+    private String latitud;
+
+
     @JsonIgnoreProperties({"productos", "handler", "hibernateLazyInitializer"})
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "maquina", cascade = CascadeType.ALL)
     private List<Producto> productos;
@@ -126,5 +132,29 @@ public class Maquina implements Serializable {
                 ", productos=" + productos +
                 ", colaMQ='" + colaMQ + '\'' +
                 '}';
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(String longitud) {
+        this.longitud = longitud;
+    }
+
+    public String getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(String latitud) {
+        this.latitud = latitud;
     }
 }

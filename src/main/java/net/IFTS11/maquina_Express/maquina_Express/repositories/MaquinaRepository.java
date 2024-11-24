@@ -15,4 +15,6 @@ public interface MaquinaRepository extends CrudRepository<Maquina,Long> {
     Long getcountAlias(String alias);
 
     Optional<Maquina> findByAlias(String alias);
+
+    Optional<Maquina> findByUrl(String url);
 }

@@ -1,31 +1,39 @@
 package net.IFTS11.maquina_Express.maquina_Express.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "LOG_MP_GENERATION_LINK")
-public class MPagoLink {
+public class MPagos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private int id_producto;
-    private int id_maquina;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "producto_id")
+    @JsonIgnoreProperties({"LOG_MP_GENERATION_LINK", "handler", "hibernateLazyInitializer"})
+    private Producto producto;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "maquina_id")
+    @JsonIgnoreProperties({"LOG_MP_GENERATION_LINK", "handler", "hibernateLazyInitializer"})
+    private Maquina maquina;
     private float precio;
     private String linkMercadoPago;
     private String estado;
 
-    public MPagoLink() {
+    public MPagos() {
     }
 
-    public MPagoLink(long id, int id_producto, int id_maquina, float precio, String linkMercadoPago) {
+    public MPagos(long id, Producto producto, Maquina maquina, float precio, String linkMercadoPago) {
         this.id = id;
-        this.id_producto = id_producto;
-        this.id_maquina = id_maquina;
+        this.producto = producto;
+        this.maquina = maquina;
         this.precio = precio;
         this.linkMercadoPago = linkMercadoPago;
         this.estado="confirmar";
     }
+
 
     public long getId() {
         return id;
@@ -35,20 +43,20 @@ public class MPagoLink {
         this.id = id;
     }
 
-    public int getId_producto() {
-        return id_producto;
+    public Producto getproducto() {
+        return producto;
     }
 
-    public void setId_producto(int id_producto) {
-        this.id_producto = id_producto;
+    public void setproducto(Producto producto) {
+        this.producto = producto;
     }
 
-    public int getId_maquina() {
-        return id_maquina;
+    public Maquina getmaquina() {
+        return maquina;
     }
 
-    public void setId_maquina(int id_maquina) {
-        this.id_maquina = id_maquina;
+    public void setId_maquina(Maquina maquina) {
+        this.maquina = maquina;
     }
 
     public float getPrecio() {

@@ -4,15 +4,16 @@ package net.IFTS11.maquina_Express.maquina_Express.controllers;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
-import jakarta.transaction.Transactional;
+import net.IFTS11.maquina_Express.maquina_Express.entities.Factura;
+import net.IFTS11.maquina_Express.maquina_Express.entities.MPagos;
 import net.IFTS11.maquina_Express.maquina_Express.entities.Maquina;
 import net.IFTS11.maquina_Express.maquina_Express.entities.Producto;
 import net.IFTS11.maquina_Express.maquina_Express.models.MPagoLink;
-import net.IFTS11.maquina_Express.maquina_Express.repositories.MPagoLinkRepository;
+import net.IFTS11.maquina_Express.maquina_Express.repositories.FacturaRepository;
+import net.IFTS11.maquina_Express.maquina_Express.repositories.MPagosRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.MaquinaRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -22,13 +23,16 @@ import java.util.*;
 public class MaquinaController {
 
     @Autowired
+    FacturaRepository facturaRepository;
+
+    @Autowired
     ProductoRepository productoRepository;
 
     @Autowired
     MaquinaRepository maquinaRepository;
 
     @Autowired
-    MPagoLinkRepository mPagoLinkRepository;
+    MPagosRepository mPagosRepository;
 
     MPagoLink mPagoLink=MPagoLink.getInstance();
 
@@ -101,7 +105,9 @@ public class MaquinaController {
         Producto producto= null;
         Optional<Maquina> opt = maquinaRepository.findById(id);
         if (opt.isPresent()){
+            System.out.println(_producto.toString());
             if( _producto.getProducto()!=""|| _producto.getPrecio()!=0 ){
+
                 _producto.setMaquina(opt.get());
                 producto= productoRepository.save(_producto);
             }
@@ -205,21 +211,54 @@ public class MaquinaController {
         return resultado;
     }*/
 
+
+
+    /*
     @GetMapping("/pagar/{precio}")
     public Preference generarMPLink(@PathVariable long precio) throws MPException, MPApiException {
         return mPagoLink.generarPago((int)precio);
+    }*/
+
+    @PostMapping("/notificar/{id}/{estado}")
+    public void confirmarCompra(@PathVariable long id,@PathVariable String estado,@RequestBody Map<String,Object> body) {
+        //Optional<MPagos> opt = mPagosRepository.findById(id);
+
+        System.out.println(body.toString());
+
+        /*if (opt.isPresent()){
+            MPagos pagado = opt.get();
+            pagado.setEstado(estado);
+            mPagosRepository.save(pagado);
+        }*/
     }
 
-    @GetMapping("/notificar/{id}")
-    public void confirmarCompra(@PathVariable long id) {
-        Optional<net.IFTS11.maquina_Express.maquina_Express.entities.MPagoLink> opt = mPagoLinkRepository.findById(id);
 
-        if (opt.isPresent()){
-            net.IFTS11.maquina_Express.maquina_Express.entities.MPagoLink pagado = opt.get();
-            pagado.setEstado("pagado");
-            mPagoLinkRepository.save(pagado);
+
+
+    @GetMapping("/historial/facturacion/{id}")
+    public List<Factura> obtenerFacturas(@PathVariable long id) {
+        Optional<Maquina> optmaquina = maquinaRepository.findById(id);
+        List<Factura> facturas = new ArrayList<>();
+        if(optmaquina.isPresent()) {
+            Maquina maquina = optmaquina.orElseThrow();
+            facturas=facturaRepository.findByMaquina(maquina);
         }
+        return facturas;
     }
+
+    @GetMapping("/historial/link/{id}")
+    public List<MPagos> obtenerLinks(@PathVariable long id) {
+        Optional<Maquina> optmaquina = maquinaRepository.findById(id);
+        List<MPagos> links = new ArrayList<>();
+        if(optmaquina.isPresent()) {
+            Maquina maquina = optmaquina.orElseThrow();
+            links= mPagosRepository.findByMaquina(maquina);
+        }
+        return links;
+    }
+
+
+
 
 
 

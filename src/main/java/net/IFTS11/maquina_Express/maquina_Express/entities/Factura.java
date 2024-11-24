@@ -1,5 +1,6 @@
 package net.IFTS11.maquina_Express.maquina_Express.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,8 +14,10 @@ public class Factura {
     private String codigoAFIP;
     private String producto;
 
-    @Column(name = "alias_maquina")
-    private String aliasMaquina;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "maquina_id")
+    @JsonIgnoreProperties({"facturas", "handler", "hibernateLazyInitializer"})
+    private Maquina maquina;
     private float precio;
 
 
