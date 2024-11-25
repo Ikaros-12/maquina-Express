@@ -3,6 +3,8 @@ package net.IFTS11.maquina_Express.maquina_Express.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "LOG_MP_GENERATION_LINK")
 public class MPagos {
@@ -22,6 +24,8 @@ public class MPagos {
     private String linkMercadoPago;
     private String estado;
 
+    private Date fecha_creacion;
+
     public MPagos() {
     }
 
@@ -32,6 +36,7 @@ public class MPagos {
         this.precio = precio;
         this.linkMercadoPago = linkMercadoPago;
         this.estado="confirmar";
+        this.fecha_creacion= new Date();
     }
 
 
@@ -81,5 +86,42 @@ public class MPagos {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public Date getFecha_creacion() {
+        return fecha_creacion;
+    }
+
+    public void setFecha_creacion(Date fecha_creacion) {
+        this.fecha_creacion = fecha_creacion;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public Maquina getMaquina() {
+        return maquina;
+    }
+
+    public void setMaquina(Maquina maquina) {
+        this.maquina = maquina;
+    }
+
+    @Override
+    public String toString() {
+        return "MPagos{" +
+                "id=" + id +
+                ", producto=" + producto +
+                ", maquina=" + maquina +
+                ", precio=" + precio +
+                ", linkMercadoPago='" + linkMercadoPago + '\'' +
+                ", estado='" + estado + '\'' +
+                ", fecha_creacion=" + fecha_creacion +
+                '}';
     }
 }

@@ -14,8 +14,21 @@ import net.IFTS11.maquina_Express.maquina_Express.repositories.MPagosRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.MaquinaRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @RestController
@@ -220,10 +233,10 @@ public class MaquinaController {
     }*/
 
     @PostMapping("/notificar/{id}/{estado}")
-    public void confirmarCompra(@PathVariable long id,@PathVariable String estado,@RequestBody Map<String,Object> body) {
+    public void confirmarCompra(@PathVariable long id,@PathVariable String estado,@RequestBody Map<String,Object> body,@RequestParam Map<String,Object> query) {
         //Optional<MPagos> opt = mPagosRepository.findById(id);
 
-        System.out.println(body.toString());
+        System.out.println(body.toString() + "--" + query.toString());
 
         /*if (opt.isPresent()){
             MPagos pagado = opt.get();
@@ -258,8 +271,50 @@ public class MaquinaController {
     }
 
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
+    @PostMapping("/images")
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file,@RequestParam("name") String name) {
+        try {
+            // Save the file to the directory
+            String filePath = saveImage(file,name);
+            return ResponseEntity.ok("Image uploaded successfully: " + filePath);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
+        }
+    }
 
+    private String saveImage(MultipartFile file,String nombre) throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        String[] aux=file.getOriginalFilename().split("\\.");
+        System.out.println(file.getOriginalFilename());
+        String ext = aux[aux.length-1];
+        String fileName = nombre+"."+ext;
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+        return filePath.toString();
+    }
 
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get(uploadDir).resolve(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

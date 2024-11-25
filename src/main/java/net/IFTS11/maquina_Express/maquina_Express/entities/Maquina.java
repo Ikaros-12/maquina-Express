@@ -119,21 +119,6 @@ public class Maquina implements Serializable {
         return productos;
     }
 
-    @Override
-    public String toString() {
-        return "Maquina{" +
-                "id=" + id +
-                ", alias='" + alias + '\'' +
-                ", modelo='" + modelo + '\'' +
-                ", marca='" + marca + '\'' +
-                ", tipo='" + tipo + '\'' +
-                ", estado='" + estado + '\'' +
-                ", url='" + url + '\'' +
-                ", productos=" + productos +
-                ", colaMQ='" + colaMQ + '\'' +
-                '}';
-    }
-
     public String getDireccion() {
         return direccion;
     }
