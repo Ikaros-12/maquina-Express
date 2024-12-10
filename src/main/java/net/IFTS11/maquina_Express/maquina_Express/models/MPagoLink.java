@@ -30,7 +30,7 @@ public class MPagoLink {
     private static MPagoLink mPagoLink;
     //private String token="TEST-5526255074427456-092407-9150e7b0eb0f6546cce3a4a88e2973c5-133465137";
     private String token="APP_USR-7043932654924606-112500-d1808081efb2914151b585b6e7514c5f-2117711312";
-    private String ngrok="https://cf5d-186-137-118-63.ngrok-free.app";
+    private String ngrok="https://7677-186-137-118-63.ngrok-free.app";
 
     private String url = "http://localhost:8100/pedido/";
 

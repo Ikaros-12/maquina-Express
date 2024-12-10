@@ -18,10 +18,19 @@ import net.IFTS11.maquina_Express.maquina_Express.repositories.MPagosRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.MaquinaRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
@@ -29,6 +38,9 @@ import java.util.*;
 @CrossOrigin
 @RequestMapping("/pedido")
 public class PedidoController {
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Autowired
     ProductoRepository productoRepository;
@@ -52,7 +64,10 @@ public class PedidoController {
 
         if (optmaquina.isPresent()){
             List<Producto>productos= optmaquina.orElseThrow().getProductos();
-            productos.forEach(producto -> productosDtos.add(new ProductosDto(producto)));
+            productos.forEach(producto -> {
+                if(producto.isActivo() && producto.getCantidad()>0)
+                    productosDtos.add(new ProductosDto(producto));
+            });
         }
 
         return productosDtos;
@@ -192,5 +207,23 @@ public class PedidoController {
 
 
 
+    }
+
+    @GetMapping("/images/{filename}")
+    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get(uploadDir).resolve(filename);
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
