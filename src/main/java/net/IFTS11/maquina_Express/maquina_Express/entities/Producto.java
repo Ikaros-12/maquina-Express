@@ -14,6 +14,8 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String producto;
+
+    private String descripcion;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "maquina_id")
     @JsonIgnoreProperties({"productos", "handler", "hibernateLazyInitializer"})
@@ -36,7 +38,7 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(long id, String producto, Maquina maquina, int cantidad, float precio, boolean activo, String imagen, Date fechavencimiento, Date fechareposicion, Date fechaactualizacion, String userService) {
+    public Producto(long id, String producto, Maquina maquina, int cantidad, float precio, boolean activo, String imagen, Date fechavencimiento, Date fechareposicion, Date fechaactualizacion, String userService, String descripcion) {
         this.id = id;
         this.producto = producto;
         this.maquina = maquina;
@@ -48,6 +50,7 @@ public class Producto {
         this.fechareposicion = fechareposicion;
         this.fechaactualizacion = fechaactualizacion;
         this.userService = userService;
+        this.descripcion= descripcion;
     }
 
     public long getId() {
@@ -98,12 +101,12 @@ public class Producto {
         this.activo = activo;
     }
 
-    public String getImage() {
+    public String getImagen() {
         return imagen;
     }
 
-    public void setImage(String image) {
-        this.imagen = image;
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 
     public Date getFechavencimiento() {
@@ -153,5 +156,13 @@ public class Producto {
                 ", fechaactualizacion=" + fechaactualizacion +
                 ", userService='" + userService + '\'' +
                 '}';
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

@@ -28,7 +28,7 @@ public class ProductosDto {
         this.id = producto.getId();
         this.producto = producto.getProducto();
         this.precio = producto.getPrecio();
-        this.imagen = producto.getImage();
+        this.imagen = producto.getImagen();
     }
 
     public long getId() {

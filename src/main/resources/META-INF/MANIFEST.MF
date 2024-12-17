@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: net.IFTS11.maquina_Express.maquina_Express.MaquinaExpressApp
+ lication
+

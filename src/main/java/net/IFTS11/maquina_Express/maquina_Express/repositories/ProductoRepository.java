@@ -13,4 +13,7 @@ public interface ProductoRepository extends CrudRepository<Producto,Long> {
 
     List<Producto> findByMaquina(Maquina maquina);
 
+    @Query("update Producto set activo = FALSE where id = ?1")
+    Long updateByActivo(Long id);
+
 }

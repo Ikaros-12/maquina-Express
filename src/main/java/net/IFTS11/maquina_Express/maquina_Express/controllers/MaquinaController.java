@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -106,7 +107,7 @@ public class MaquinaController {
         Optional<Maquina> optmaquina = maquinaRepository.findById(id);
 
         if (optmaquina.isPresent()){
-            productos= optmaquina.orElseThrow().getProductos();
+            productos= optmaquina.orElseThrow().getProductos().stream().filter(Producto::isActivo).collect(Collectors.toList());
         }
 
         return productos;
@@ -162,7 +163,7 @@ public class MaquinaController {
             producto.setActivo(_producto.isActivo());
             producto.setPrecio(_producto.getPrecio());
             producto.setCantidad(_producto.getCantidad());
-            producto.setImage(_producto.getImage());
+            producto.setImagen(_producto.getImagen());
             producto.setFechaactualizacion(_producto.getFechaactualizacion());
             producto.setFechareposicion(_producto.getFechareposicion());
             producto.setFechavencimiento(_producto.getFechavencimiento());
@@ -183,7 +184,9 @@ public class MaquinaController {
         Optional<Producto> op= productoRepository.findById(id);
         Map<String,Object> respuesta = new HashMap<>();
         if (op.isPresent()){
-            productoRepository.deleteById(id);
+            Producto producto=op.get();
+            producto.setActivo(false);
+            producto=productoRepository.save(producto);
             respuesta.put("code",200);
             respuesta.put("message","Borro exitosamente el registro");
         }else {
@@ -279,7 +282,7 @@ public class MaquinaController {
         try {
             // Save the file to the directory
             String filePath = saveImage(file,name);
-            return ResponseEntity.ok("Image uploaded successfully: " + filePath);
+            return new ResponseEntity<String>("Image uploaded successfully: " + name,null,HttpStatus.CREATED);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
         }

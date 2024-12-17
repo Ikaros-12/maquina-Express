@@ -13,6 +13,7 @@ import net.IFTS11.maquina_Express.maquina_Express.entities.MPagos;
 import net.IFTS11.maquina_Express.maquina_Express.entities.Maquina;
 import net.IFTS11.maquina_Express.maquina_Express.entities.Producto;
 import net.IFTS11.maquina_Express.maquina_Express.models.MPagoLink;
+import net.IFTS11.maquina_Express.maquina_Express.models.MQhive;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.FacturaRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.MPagosRepository;
 import net.IFTS11.maquina_Express.maquina_Express.repositories.MaquinaRepository;
@@ -54,6 +55,10 @@ public class PedidoController {
     FacturaRepository facturaRepository;
 
     MPagoLink mPagoLink=MPagoLink.getInstance();
+
+    MQhive mQhive=MQhive.getInstance();
+
+    String url_success="http://192.168.1.225:8100/pedido/success";
 
     @GetMapping("/menu/{url}")
     public List<ProductosDto> listProductos(@PathVariable String url){
@@ -120,6 +125,9 @@ public class PedidoController {
                 factura.setProducto(mpagos.getproducto());
                 factura.setProducto_nombre(mpagos.getProducto().getProducto());
                 facturaRepository.save(factura);
+                String topic=mpagos.getproducto().getMaquina().getColaMQ()+"/pedido";
+                String mensage=mpagos.getproducto().getProducto();
+                mQhive.publicarMensaje(topic,mensage);
             }
             mPagosRepository.save(mpagos);
 
@@ -148,7 +156,7 @@ public class PedidoController {
             mlink.setEstado("Creado");
             MPagos mresp= mPagosRepository.save(mlink);
 
-            respuesta = mPagoLink.generarPago((int)producto.getPrecio(),mresp.getId());
+            respuesta = mPagoLink.generarPago(producto,mresp.getId());
 
             //respuesta= preference.getSandboxInitPoint();
             mresp.setLinkMercadoPago(respuesta.getSandboxInitPoint());
@@ -182,7 +190,7 @@ public class PedidoController {
                           @RequestParam("processing_mode") String processingMode,
                           @RequestParam("merchant_account_id") String merchantAccountId,
                           RedirectAttributes attributes) throws IOException {
-        String url="http://localhost:8100/pedido/success";
+        String url="http://localhost:8100/pedido/fail";
         httpServletResponse.sendRedirect(url);
 
     }
@@ -202,8 +210,8 @@ public class PedidoController {
                           RedirectAttributes attributes) throws IOException {
 
 
-        String url="http://localhost:8100/pedido/success";
-        httpServletResponse.sendRedirect(url);
+        //String url="http://localhost:8100/pedido/success";
+        httpServletResponse.sendRedirect(url_success);
 
 
 
@@ -226,4 +234,18 @@ public class PedidoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/conectar")
+    public ResponseEntity<String> conectarmq(){
+        boolean resultado=mQhive.conectar();
+        return new ResponseEntity<String>(String.valueOf(resultado),null,HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/publicar")
+    public ResponseEntity<String> publicar(){
+        boolean resultado=mQhive.publicarMensaje("pedido","cafe");
+        return new ResponseEntity<String>(String.valueOf(resultado),null,HttpStatus.ACCEPTED);
+    }
+
+
 }

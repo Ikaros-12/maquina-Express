@@ -52,6 +52,7 @@ public class SpringSecurityConfig {
         return http.authorizeHttpRequests(authz -> authz
                 //.requestMatchers("/api" ).permitAll()
                 .requestMatchers("/api/**" ).authenticated()
+                .requestMatchers("/users/validation" ).authenticated()
                 .requestMatchers("/api/users/registrar" ).permitAll()
                 //.requestMatchers("/api/users/*" ).permitAll()
                 .requestMatchers("/pedido/**" ).permitAll()

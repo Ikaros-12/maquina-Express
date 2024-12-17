@@ -13,6 +13,8 @@ import com.mercadopago.resources.preference.Preference;
 import com.mercadopago.resources.preference.PreferenceBackUrls;
 import jakarta.persistence.*;
 import com.mercadopago.MercadoPagoConfig;
+import net.IFTS11.maquina_Express.maquina_Express.entities.Producto;
+import org.springframework.beans.factory.annotation.Value;
 
 
 import java.math.BigDecimal;
@@ -30,9 +32,12 @@ public class MPagoLink {
     private static MPagoLink mPagoLink;
     //private String token="TEST-5526255074427456-092407-9150e7b0eb0f6546cce3a4a88e2973c5-133465137";
     private String token="APP_USR-7043932654924606-112500-d1808081efb2914151b585b6e7514c5f-2117711312";
-    private String ngrok="https://7677-186-137-118-63.ngrok-free.app";
 
-    private String url = "http://localhost:8100/pedido/";
+    //@Value("${ngrok.dir}")
+    //@Value("${ngrok.dir}")
+    private String ngrok="https://94c1-186-137-118-63.ngrok-free.app";
+
+    private String url = "http://192.168.1.225:8100/pedido/";
 
     private MPagoLink() {
         MercadoPagoConfig.setAccessToken(token);
@@ -67,22 +72,22 @@ public class MPagoLink {
         return preference;
     }
 
-    public Preference generarPago(int monto,long mlink_id) throws MPException, MPApiException {
+    public Preference generarPago(Producto producto, long mlink_id) throws MPException, MPApiException {
         PreferenceItemRequest itemRequest =
                 PreferenceItemRequest.builder()
-                        .id("1234")
-                        .title("Games")
-                        .description("PS5")
+                        .id(String.valueOf(producto.getId()))
+                        .title(producto.getProducto())
+                        .description(producto.getDescripcion())
                         //.pictureUrl("")
                         //.categoryId("Alimentos")
                         .quantity(1)
                         .currencyId("ARS")
-                        .unitPrice(new BigDecimal(monto))
+                        .unitPrice(new BigDecimal(producto.getPrecio()))
                         .build();
         PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                        .success(ngrok+"/pedido/notificar/"+mlink_id+"/success")
+                        .success(url+producto.getMaquina().getUrl()+"/success")
                         //.pending("http://localhost:8090/api/notificar/"+mlink_id+"/pending")
-                        .failure(ngrok+"/pedido/notificar/"+mlink_id+"/failure")
+                        .failure(url+producto.getMaquina().getUrl()+"/failure")
                         .build();
 
         // sacar efectivo de las opciones

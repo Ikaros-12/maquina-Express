@@ -50,7 +50,7 @@ public class HistorialController {
         return facturasDTO;
     }
 
-    @GetMapping("/maquina/{id}/Facturacion")
+    @GetMapping("/maquina/{id}/facturacion")
     public Map<String, Estadisticas> obtenerMaxFacturacionActual(@PathVariable long id){
         Map<String,Estadisticas> maxFacturacion=new HashMap<String,Estadisticas>();
         Estadisticas estadisticas_total= new Estadisticas(0,0);
